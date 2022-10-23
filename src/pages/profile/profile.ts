@@ -13,6 +13,7 @@ import { StorageService } from '../../services/storage.service';
 export class ProfilePage {
 
   cliente: ClienteDTO;
+  fallbackUrl = 'assets/imgs/avatar-blank.png';
 
   constructor(
     public navCtrl: NavController,
@@ -27,7 +28,7 @@ export class ProfilePage {
       this.clienteService.findByEmail(localUser.email)
         .subscribe(response => {
           this.cliente = response["obj"];
-          this.getImageIfExists();
+          this.cliente.imageUrl = `${API_CONFIG.bucketBaseUrl}/cp${this.cliente.id}.jpg`;
         },
         error => {
           if (error.status == 403) {
@@ -40,13 +41,7 @@ export class ProfilePage {
     }
   }
 
-  getImageIfExists() {
-    this.clienteService.getImageFromBucket(this.cliente.id)
-      .subscribe(
-        response => {
-          this.cliente.imageUrl = `${API_CONFIG.bucketBaseUrl}/cp${this.cliente.id}.jpg`;
-        }
-      );
+  onImageError() {
+    this.cliente.imageUrl = this.fallbackUrl;
   }
-
 }
