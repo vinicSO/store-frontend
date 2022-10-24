@@ -25,7 +25,6 @@ export class ProdutosPage {
         response => {
           this.items = response["obj"]["content"];
           this.items.map(p => p.imageUrl=`${API_CONFIG.bucketBaseUrl}/prod${p.id}-small.jpg`);
-          console.log(this.items)
         },
         error => {}
       );
@@ -35,8 +34,13 @@ export class ProdutosPage {
     this.items.find(p => p.id === item_id).imageUrl = 'assets/imgs/prod.png';
   }
 
-  showDetail(item_id: string) {
-    this.navCtrl.push('ProdutoDetailPage');
+  showDetail(produto_id: string) {
+    this.navCtrl.push(
+      'ProdutoDetailPage',
+      {
+        produto_id: produto_id
+      }
+    );
   }
 
 }
