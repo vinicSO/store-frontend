@@ -35,4 +35,8 @@ export class ProdutosPage {
     this.items.find(p => p.id === item_id).imageUrl = 'assets/imgs/prod.png';
   }
 
+  showDetail(item_id: string) {
+    this.navCtrl.push('ProdutoDetailPage');
+  }
+
 }
