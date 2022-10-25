@@ -1,10 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs/Rx";
 import { API_CONFIG } from "../../config/api.config";
 import { Cart } from "../../models/cart";
-import { CartItem } from "../../models/cart-item";
-import { CategoriaDTO } from "../../models/categoria.dto";
 import { ProdutoDTO } from "../../models/produto.dto";
 import { StorageService } from "../storage.service";
 
@@ -35,20 +32,55 @@ export class CartService {
   addProduto(produto: ProdutoDTO): Cart {
     let cart: Cart = this.getCart();
     let position = cart.items.findIndex(e => e.produto.id === produto.id);
-    let items: CartItem[] = cart.items;
-
     if (position != -1) {
-      items[position].quantidade += 1
+      cart.items[position].quantidade += 1
     } else {
-      items.push({
+
+      produto.imageUrl = `${API_CONFIG.bucketBaseUrl}/prod${produto.id}-small.jpg`;
+
+      cart.items.push({
         produto: produto,
         quantidade: 1
       });
     }
-
-    cart = {items: items}
     this.storageService.setCart(cart);
 
     return cart;
+  }
+
+  removeProduto(produto: ProdutoDTO): Cart {
+    let cart: Cart = this.getCart();
+    let position = cart.items.findIndex(e => e.produto.id === produto.id);
+    if (position != -1) {
+      cart.items[position].quantidade -= 1
+
+      if (cart.items[position].quantidade === 0) {
+        cart.items.splice(position, 1);
+      }
+    }
+    this.storageService.setCart(cart);
+
+    return cart;
+  }
+
+  deleteProduto(produto: ProdutoDTO): Cart {
+    let cart: Cart = this.getCart();
+    let position = cart.items.findIndex(e => e.produto.id === produto.id);
+    if (position != -1) {
+      cart.items.splice(position, 1);
+    }
+    this.storageService.setCart(cart);
+
+    return cart;
+  }
+
+  total(): number {
+    let cart: Cart = this.getCart()
+    let sum = 0;
+    for (let i = 0; i < cart.items.length; i++) {
+      const element = cart.items[i];
+      sum += element.produto.preco * element.quantidade;
+    }
+    return sum;
   }
 }

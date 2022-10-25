@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { CartItem } from '../../models/cart-item';
+import { ProdutoDTO } from '../../models/produto.dto';
 import { CartService } from '../../services/domain/cart.service';
 
 @IonicPage()
@@ -25,7 +26,29 @@ export class CartPage {
   }
 
   onImageError(item_id: string) {
-    this.items.find(i => i.produto.id === item_id).produto.imageUrl = 'assets/imgs/prod.png';
+    let position = this.items.findIndex(i => i.produto.id === item_id);
+    if (position != -1) {
+      this.items[position].produto.imageUrl = 'assets/imgs/prod.png';
+    }
   }
 
+  removeItem(produto: ProdutoDTO) {
+    this.items = this.cartService.removeProduto(produto).items;
+  }
+
+  deleteItem(produto: ProdutoDTO) {
+    this.items = this.cartService.deleteProduto(produto).items;
+  }
+
+  insertItem(produto: ProdutoDTO) {
+    this.items = this.cartService.addProduto(produto).items;
+  }
+
+  total(): number {
+    return this.cartService.total();
+  }
+
+  goOn() {
+    this.navCtrl.setRoot('CategoriasPage');
+  }
 }
