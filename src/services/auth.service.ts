@@ -27,7 +27,8 @@ export class AuthService {
       {
         observe: 'response',
         responseType: 'text'
-      });
+      }
+    );
   }
 
   refreshToken() {
@@ -36,7 +37,8 @@ export class AuthService {
       {
         observe: 'response',
         responseType: 'text'
-      });
+      }
+    );
   }
 
   successfullLogin(authorizationValue: string) {
