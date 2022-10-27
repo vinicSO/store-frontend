@@ -1,6 +1,5 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs/Rx";
 import { API_CONFIG } from "../../config/api.config";
 import { ClienteDTO } from "../../models/cliente.dto";
 import { StorageService } from "../storage.service";
@@ -14,6 +13,10 @@ export class ClienteService {
 
   findByEmail(email: string) {
     return this.http.get(`${API_CONFIG.baseUrl}/clientes/email?value=${email}`);
+  }
+
+  findById(id: string) {
+    return this.http.get(`${API_CONFIG.baseUrl}/clientes/${id}`);
   }
 
   insert(obj: ClienteDTO) {
