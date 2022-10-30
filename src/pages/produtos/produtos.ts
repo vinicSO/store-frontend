@@ -11,7 +11,8 @@ import { ProdutoService } from '../../services/domain/produto.service';
 })
 export class ProdutosPage {
 
-  items: ProdutoDTO[];
+  items: ProdutoDTO[] = [];
+  page: number = 0;
 
   constructor(
     public navCtrl: NavController,
@@ -27,11 +28,12 @@ export class ProdutosPage {
 
   loadData() {
     let loader = this.presentLoading();
-    this.produtoService.findByCategoria(this.navParams.get("categoria_id"))
+    this.produtoService.findByCategoria(this.navParams.get("categoria_id"), this.page, 10)
       .subscribe(
         response => {
-          this.items = response["obj"]["content"];
-          this.items.map(p => p.imageUrl=`${API_CONFIG.bucketBaseUrl}/prod${p.id}-small.jpg`);
+          let newItems: ProdutoDTO[] = response['obj']['content'];
+          newItems.map(p => p.imageUrl=`${API_CONFIG.bucketBaseUrl}/prod${p.id}-small.jpg`);
+          this.items = this.items.concat(newItems);
         },
         error => {},
         () => {
@@ -62,9 +64,19 @@ export class ProdutosPage {
   }
 
   doRefresh(refresher) {
+    this.page = 0;
+    this.items = [];
     this.loadData();
     setTimeout(() => {
       refresher.complete();
+    }, 1000);
+  }
+
+  doInfinite(infiniteScroll) {
+    this.page++;
+    this.loadData();
+    window.setTimeout(() => {
+      infiniteScroll.complete();
     }, 1000);
   }
 
