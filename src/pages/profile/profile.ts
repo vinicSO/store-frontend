@@ -4,6 +4,7 @@ import { API_CONFIG } from '../../config/api.config';
 import { ClienteDTO } from '../../models/cliente.dto';
 import { ClienteService } from '../../services/domain/cliente.service';
 import { StorageService } from '../../services/storage.service';
+import { Camera, CameraOptions } from '@ionic-native/camera';
 
 @IonicPage()
 @Component({
@@ -12,6 +13,14 @@ import { StorageService } from '../../services/storage.service';
 })
 export class ProfilePage {
 
+  options: CameraOptions = {
+    quality: 100,
+    destinationType: this.camera.DestinationType.DATA_URL,
+    encodingType: this.camera.EncodingType.PNG,
+    mediaType: this.camera.MediaType.PICTURE
+  };
+  picture: string;
+  cameraOn: boolean = false;
   cliente: ClienteDTO;
   fallbackUrl = 'assets/imgs/avatar-blank.png';
 
@@ -19,7 +28,9 @@ export class ProfilePage {
     public navCtrl: NavController,
     public navParams: NavParams,
     public storage: StorageService,
-    public clienteService: ClienteService) {
+    public clienteService: ClienteService,
+    public camera: Camera,
+  ) {
   }
 
   ionViewDidLoad() {
@@ -43,5 +54,22 @@ export class ProfilePage {
 
   onImageError() {
     this.cliente.imageUrl = this.fallbackUrl;
+  }
+
+  getCameraPicture() {
+    this.cameraOn = true;
+    this.camera.getPicture(this.options).then(
+      (imageData) => {
+        this.picture = 'data:image/jpeg;base64,' + imageData;
+        this.cameraOn = false;
+      },
+      (err) => {
+        this.cameraOn = true;
+        console.log(err);
+      }
+    ).catch((err2) => {
+      this.cameraOn = true;
+      console.log(err2);
+    });
   }
 }
